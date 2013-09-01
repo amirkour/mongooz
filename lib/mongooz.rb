@@ -81,13 +81,15 @@ module Mongooz
 				class_to_retrieve_name_from.name.split("::").last.downcase
 			end
 
-			# will override options in the given hash with defaults, where defaults
-			# are specified
+			# will use Mongooz.defaults where they are missing in the given hash
 			def set_db_options(options)
 				options[:collection]=options[:collection] || MongoozHash.get_class_name_without_namespace(self)
 				options[:db]=options[:db] || Mongooz.DEFAULT_DB
 				options[:host]=options[:host] || Mongooz.DEFAULT_HOST
 				options[:port]=options[:port] || Mongooz.DEFAULT_PORT
+				options[:user]=options[:user] || Mongooz.DEFAULT_USER
+				options[:password]=options[:password] || Mongooz.DEFAULT_PASSWORD
+				options
 			end
 
 			def typified_result_hash_or_nil(hash_to_wrap)
@@ -174,10 +176,7 @@ module Mongooz
 		end
 
 		def set_db_options(options)
-			options[:collection]=options[:collection] || MongoozHash.get_class_name_without_namespace(self.class)
-			options[:db]=options[:db] || Mongooz.DEFAULT_DB
-			options[:host]=options[:host] || Mongooz.DEFAULT_HOST
-			options[:port]=options[:port] || Mongooz.DEFAULT_PORT
+			self.class.set_db_options(options)
 		end
 
 		def db_insert(options={})
