@@ -109,7 +109,7 @@ module Mongooz
 					end
 				end
 
-				results
+				results.length > 0 ? results : nil
 			end
 
 			def db_get_with_id(options={})
@@ -171,7 +171,7 @@ module Mongooz
 					end
 				end
 
-				results
+				results.length > 0 ? results : nil
 			end
 		end
 
