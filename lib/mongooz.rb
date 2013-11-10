@@ -174,6 +174,38 @@ module Mongooz
 
 				results.length > 0 ? results : nil
 			end
+
+			# this is basically attr_reader
+			def getter(*args)
+				return unless args.length>0
+				args.each do |name_of_getter|
+					raise "name of getter has to be a string or a symbol" unless name_of_getter.kind_of?(String) || name_of_getter.kind_of?(Symbol)
+					name_of_getter=name_of_getter.to_sym if name_of_getter.kind_of?(String)
+
+					# getters just return the equivalent hash key on your objects
+					define_method(name_of_getter){ self[name_of_getter] }
+				end
+			end
+
+			# this is basically attr_writer
+			def setter(*args)
+				return unless args.length>0
+				args.each do |name_of_setter|
+					raise "name of setter has to be a string or a symbol" unless name_of_setter.kind_of?(String) || name_of_setter.kind_of?(Symbol)
+					name_of_setter=name_of_setter.to_sym if name_of_setter.kind_of?(String)
+
+					# setters just set the equivalent hash key on your objects
+					define_method("#{name_of_setter}="){|new_value| self[name_of_setter]=new_value }
+				end
+			end
+
+			# this is basically attr_accessor
+			def property(*args)
+				args.each do |new_property|
+					getter(new_property)
+					setter(new_property)
+				end
+			end
 		end# class<<self
 
 		def initialize(*args,&block); super; end
