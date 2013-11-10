@@ -1,8 +1,8 @@
 Gem::Specification.new do |s|
 	s.name="mongooz"
-	s.version="0.0.1"
+	s.version="0.0.2"
 	s.authors=["amir kouretchian"]
-	s.date=%q{2013-08-08}
+	s.date=%q{2013-11-10}
 	s.description="Quick-n-easy mongo hashes."
 	s.summary=s.description
 	s.files=%w(README.md).concat(Dir.glob("**/*.rb"))

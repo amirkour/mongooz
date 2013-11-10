@@ -94,7 +94,8 @@ module Mongooz
 
 			def typified_result_hash_or_nil(hash_to_wrap)
 				return nil unless hash_to_wrap.kind_of?(Hash)
-				self.new.update(hash_to_wrap)
+				result_hash=self.new(hash_to_wrap)
+				result_hash
 			end
 
 			def db_query(query={},query_opts={},options={})
@@ -173,7 +174,9 @@ module Mongooz
 
 				results.length > 0 ? results : nil
 			end
-		end
+		end# class<<self
+
+		def initialize(*args,&block); super; end
 
 		def set_db_options(options)
 			self.class.set_db_options(options)
