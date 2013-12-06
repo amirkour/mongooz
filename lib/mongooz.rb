@@ -72,8 +72,44 @@ module Mongooz
 		end
 	end# Base
 
-	# TODO - comment mah!
 	class MongoozHash < HashWithIndifferentAccess
+		class << self
+			# this is basically attr_reader
+			def getter(*args)
+				return unless args.length>0
+				args.each do |name_of_getter|
+					raise "name of getter has to be a string or a symbol" unless name_of_getter.kind_of?(String) || name_of_getter.kind_of?(Symbol)
+					name_of_getter=name_of_getter.to_sym if name_of_getter.kind_of?(String)
+
+					# getters just return the equivalent hash key on your objects
+					define_method(name_of_getter){ self[name_of_getter] }
+				end
+			end
+
+			# this is basically attr_writer
+			def setter(*args)
+				return unless args.length>0
+				args.each do |name_of_setter|
+					raise "name of setter has to be a string or a symbol" unless name_of_setter.kind_of?(String) || name_of_setter.kind_of?(Symbol)
+					name_of_setter=name_of_setter.to_sym if name_of_setter.kind_of?(String)
+
+					# setters just set the equivalent hash key on your objects
+					define_method("#{name_of_setter}="){|new_value| self[name_of_setter]=new_value }
+				end
+			end
+
+			# this is basically attr_accessor
+			def property(*args)
+				args.each do |new_property|
+					getter(new_property)
+					setter(new_property)
+				end
+			end
+		end
+	end# MongoozHash
+
+	# TODO - comment mah!
+	class ActiveMongoozHash < MongoozHash
 
 		class << self
 			def get_class_name_without_namespace(class_to_retrieve_name_from)
@@ -83,7 +119,7 @@ module Mongooz
 
 			# will use Mongooz.defaults where they are missing in the given hash
 			def set_db_options(options)
-				options[:collection]=options[:collection] || MongoozHash.get_class_name_without_namespace(self)
+				options[:collection]=options[:collection] || get_class_name_without_namespace(self)
 				options[:db]=options[:db] || Mongooz.DEFAULT_DB
 				options[:host]=options[:host] || Mongooz.DEFAULT_HOST
 				options[:port]=options[:port] || Mongooz.DEFAULT_PORT
@@ -173,38 +209,6 @@ module Mongooz
 				end
 
 				results.length > 0 ? results : nil
-			end
-
-			# this is basically attr_reader
-			def getter(*args)
-				return unless args.length>0
-				args.each do |name_of_getter|
-					raise "name of getter has to be a string or a symbol" unless name_of_getter.kind_of?(String) || name_of_getter.kind_of?(Symbol)
-					name_of_getter=name_of_getter.to_sym if name_of_getter.kind_of?(String)
-
-					# getters just return the equivalent hash key on your objects
-					define_method(name_of_getter){ self[name_of_getter] }
-				end
-			end
-
-			# this is basically attr_writer
-			def setter(*args)
-				return unless args.length>0
-				args.each do |name_of_setter|
-					raise "name of setter has to be a string or a symbol" unless name_of_setter.kind_of?(String) || name_of_setter.kind_of?(Symbol)
-					name_of_setter=name_of_setter.to_sym if name_of_setter.kind_of?(String)
-
-					# setters just set the equivalent hash key on your objects
-					define_method("#{name_of_setter}="){|new_value| self[name_of_setter]=new_value }
-				end
-			end
-
-			# this is basically attr_accessor
-			def property(*args)
-				args.each do |new_property|
-					getter(new_property)
-					setter(new_property)
-				end
 			end
 		end# class<<self
 

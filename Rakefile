@@ -21,7 +21,7 @@ task :rebuild => :clean do
 	puts "Rebuilding ..."
 	puts " *** WARNING *** - gem version is currently hardcoded!"
 	system "gem build mongooz.gemspec"
-	system "gem install mongooz-0.0.2.gem"#todo - version on cmd-line maybe?
+	system "gem install mongooz-0.0.3.gem"#todo - version on cmd-line maybe?
 end
 
 task :clean do
